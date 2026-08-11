@@ -6,20 +6,42 @@
 </head>
 <body class="container mt-5">
     <div class="card">
-        <div class="card-body text-center">
+        <div class="card-body">
             {% if passed %}
                 <h1 class="text-success">Congratulations!</h1>
-                <p class="lead">You have successfully passed the exam.</p>
+                <p class="lead">You have successfully passed the exam with a score of {{ grade_percentage|floatformat:0 }}%.</p>
             {% else %}
                 <h1 class="text-danger">Better luck next time!</h1>
-                <p class="lead">You did not pass the exam. Please try again.</p>
+                <p class="lead">You scored {{ grade_percentage|floatformat:0 }}%. You need 70% to pass.</p>
             {% endif %}
             
-            <h3>Your Score: {{ score }}%</h3>
-            <p>Total Questions: {{ total }}</p>
-            <p>Correct Answers: {{ correct }}</p>
+            <h3>Exam Results</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Your Answer</th>
+                        <th>Correct?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submissions %}
+                        <tr>
+                            <td>{{ submission.question.question_text }}</td>
+                            <td>{{ submission.chosen_choice.choice_text }}</td>
+                            <td>
+                                {% if submission.chosen_choice.is_correct %}
+                                    <span class="badge bg-success">Correct</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Incorrect</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
             
-            <a href="/onlinecourse/" class="btn btn-primary mt-3">Back to Course</a>
+            <a href="{% url 'course_details' course.id %}" class="btn btn-primary mt-3">Back to Course</a>
         </div>
     </div>
 </body>
